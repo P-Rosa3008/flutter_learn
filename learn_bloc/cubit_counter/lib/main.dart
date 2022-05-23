@@ -34,42 +34,43 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      _counter--;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            BlocBuilder<CounterCubit, CounterState>(
-              builder: (context, state) {
-                return Text(
-                  state.counterVal.toString(),
-                  style: Theme.of(context).textTheme.headline4,
-                );
-              },
-            ),
-          ],
+      body: BlocListener<CounterCubit, CounterState>(
+        listener: (context, state) {
+          if (state.wasIncremented!) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Incremented!"),
+              duration: Duration(milliseconds: 300),
+            ));
+          } else if (!state.wasIncremented!) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Decremented!"),
+              duration: Duration(milliseconds: 300),
+            ));
+          }
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'You have pushed the button this many times:',
+              ),
+              BlocBuilder<CounterCubit, CounterState>(
+                builder: (context, state) {
+                  return Text(
+                    state.counterVal.toString(),
+                    style: Theme.of(context).textTheme.headline4,
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: Row(
